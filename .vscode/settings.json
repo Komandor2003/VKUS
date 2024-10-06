@@ -1,0 +1,19 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "xprotocol",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 33060,
+            "driver": "MySQL",
+            "name": "VKUS",
+            "database": "VKUS",
+            "username": "root",
+            "password": "1111",
+            "connectionTimeout": 30
+        }
+    ]
+}

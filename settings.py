@@ -1,2 +1,2 @@
 def take_set():
-    return 0
+    return 1

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .auth-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .auth-btn.logout {
+            background-color: #f44336;
+        }
+        .auth-btn:hover {
+            opacity: 0.9;
+        }
+        .container {
+            text-align: center;
+            padding: 50px;
+        }
+        .container h1 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Добро пожаловать в админпанель</h1>
+        {% if session.user %}
+            <a href="{{ url_for('logout') }}" class="auth-btn logout">Выйти</a>
+        {% else %}
+            <a href="{{ url_for('login') }}" class="auth-btn">Войти</a>
+        {% endif %}
+    </header>
+
+    <div class="container">
+        <h1>Панель управления</h1>
+        <p>Вы успешно вошли в систему. Здесь будет интерфейс управления.</p>
+    </div>
+</body>
+</html>

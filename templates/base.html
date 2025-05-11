@@ -1,27 +1,37 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Fastfood{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Web Flavor{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <!-- Иконка сайта -->
+  <link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}" type="image/png">
 </head>
 <body>
-    <header>
-        <nav>
-            <a href="{{ url_for('index') }}">Главная</a>
-            <a href="{{ url_for('menu') }}">Меню</a>
-            {% if session.get('username') %}
-                <a href="{{ url_for('profile') }}">👤 {{ session['username'] }}</a>
-                <a href="{{ url_for('logout') }}">Выход</a>
-            {% else %}
-                <a href="{{ url_for('login') }}">Вход</a>
-                <a href="{{ url_for('register') }}">Регистрация</a>
-            {% endif %}
-            <a href="{{ url_for('cart') }}">🛒</a>
-        </nav>
-    </header>
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+  <header>
+    <div class="logo">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Логотип">
+    </div>
+    <nav>
+      <a href="{{ url_for('index') }}">Главная</a>
+      <a href="{{ url_for('menu') }}">Меню</a>
+    </nav>
+    <div class="profile-cart">
+      <!-- Иконки корзины и профиля -->
+      <a href="{{ url_for('cart') }}" class="header-icon" title="Корзина">
+        <img src="{{ url_for('static', filename='images/cart_icon.png') }}" alt="Корзина">
+      </a>
+      <a href="{{ url_for('profile') }}" class="header-icon" title="Профиль">
+        <img src="{{ url_for('static', filename='images/profile_icon.png') }}" alt="Профиль">
+      </a>
+    </div>
+  </header>
+
+  {% block content %}{% endblock %}
+
+  <footer>
+    <p>&copy; 2025 Web Flavor</p>
+  </footer>
 </body>
 </html>

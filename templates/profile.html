@@ -1,11 +1,38 @@
-{% extends 'base.html' %}
-{% block title %}Профиль{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}Личный кабинет{% endblock %}
+
 {% block content %}
-<h2>Профиль: {{ user.username }}</h2>
-<h3>Ваши заказы:</h3>
-<ul>
-    {% for order in orders %}
-    <li>Заказ №{{ order.id }} — {{ order.total_price }} ₽</li>
-    {% endfor %}
-</ul>
+<div class="profile-container">
+  <h2>Добро пожаловать, {{ user.username }}!</h2>
+
+  <a href="{{ url_for('edit_profile') }}" class="btn">Редактировать профиль</a>
+  <a href="{{ url_for('logout') }}" class="btn logout">Выйти</a>
+
+  <h3>Мои заказы</h3>
+  {% if orders %}
+    <ul class="orders-list">
+      {% for order in orders %}
+        <li>
+          <strong>Заказ #{{ order.id }}</strong><br>
+          Сумма: {{ order.total_price }} ₽<br>
+          Состав: 
+          {% set product_ids = order.items.split(',') %}
+          <ul>
+            {% for pid in product_ids %}
+              {% set product = Product.query.get(pid|int) %}
+              {% if product %}
+                <li>{{ product.name }}</li>
+              {% else %}
+                <li>Товар (удалён)</li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>У вас пока нет заказов.</p>
+  {% endif %}
+</div>
 {% endblock %}

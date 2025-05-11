@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
@@ -16,6 +18,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
+        
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -34,6 +37,7 @@ class Order(db.Model):
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/menu')
 def menu():
@@ -73,6 +77,9 @@ def checkout():
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
+    if not session.get('is_admin'):
+        return redirect(url_for('login'))
+
     if request.method == 'POST':
         name = request.form['name']
         description = request.form['description']
@@ -106,13 +113,13 @@ def login():
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
             session['username'] = user.username
+            session['is_admin'] = user.username == 'admin'
             return redirect(url_for('profile'))
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
-    session.pop('user_id', None)
-    session.pop('username', None)
+    session.clear()
     return redirect(url_for('index'))
 
 @app.route('/profile')
@@ -122,9 +129,27 @@ def profile():
         return redirect(url_for('login'))
     user = User.query.get(user_id)
     orders = Order.query.filter_by(user_id=user_id).all()
-    return render_template('profile.html', user=user, orders=orders)
+    return render_template('profile.html', user=user, orders=orders, Product=Product)
+
+@app.route('/edit_profile', methods=['GET', 'POST'])
+def edit_profile():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+    user = User.query.get(user_id)
+    if request.method == 'POST':
+        new_username = request.form['username']
+        new_password = request.form['password']
+        if new_username:
+            user.username = new_username
+        if new_password:
+            user.password = generate_password_hash(new_password)
+        db.session.commit()
+        session['username'] = user.username
+        return redirect(url_for('profile'))
+    return render_template('edit_profile.html', user=user)
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True) 
+    app.run(debug=True)

@@ -1,19 +1,85 @@
 {% extends 'base.html' %}
-{% block title %}Админ-панель{% endblock %}
-{% block content %}
-<h2>Добавить продукт</h2>
-<form method="post">
-    <input type="text" name="name" placeholder="Название" required>
-    <input type="text" name="description" placeholder="Описание">
-    <input type="number" step="0.01" name="price" placeholder="Цена" required>
-    <input type="text" name="image_url" placeholder="URL изображения">
-    <button type="submit">Добавить</button>
-</form>
 
-<h3>Существующие продукты:</h3>
-<ul>
-    {% for product in products %}
-    <li>{{ product.name }} — {{ product.price }} ₽</li>
-    {% endfor %}
-</ul>
+{% block content %}
+    <div class="admin-container">
+        <h2>Админ-Панель</h2>
+
+        <h3>Добавить новый продукт</h3>
+        <form action="{{ url_for('admin') }}" method="POST">
+            <div class="form-group">
+                <label for="name">Название:</label>
+                <input type="text" id="name" name="name" required class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="description">Описание:</label>
+                <input type="text" id="description" name="description" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="price">Цена:</label>
+                <input type="number" id="price" name="price" required class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="image_url">Ссылка на изображение:</label>
+                <input type="text" id="image_url" name="image_url" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">Добавить продукт</button>
+        </form>
+
+        <h3>Все продукты</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Описание</th>
+                    <th>Цена</th>
+                    <th>Изображение</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.description }}</td>
+                        <td>{{ product.price }} ₽</td>
+                        <td><img src="{{ product.image_url }}" alt="Product Image" width="50" /></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Все заказы</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Номер заказа</th>
+                    <th>Пользователь</th>
+                    <th>Сумма</th>
+                    <th>Товары</th>
+                    <th>Статус</th>
+                    <th>Изменить статус</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.user.username }}</td>
+                        <td>{{ order.total_price }} ₽</td>
+                        <td>{{ order.items }}</td>
+                        <td>{{ order.status }}</td>
+                        <td>
+                            <form action="{{ url_for('update_order_status', order_id=order.id) }}" method="POST">
+                                <select name="status" class="form-control">
+                                    <option value="В ожидании" {% if order.status == 'В ожидании' %}selected{% endif %}>В ожидании</option>
+                                    <option value="В процессе" {% if order.status == 'В процессе' %}selected{% endif %}>В процессе</option>
+                                    <option value="Завершено" {% if order.status == 'Завершено' %}selected{% endif %}>Завершено</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary">Обновить</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

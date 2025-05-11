@@ -9,6 +9,9 @@
   <a href="{{ url_for('edit_profile') }}" class="btn">Редактировать профиль</a>
   <a href="{{ url_for('logout') }}" class="btn logout">Выйти</a>
 
+  <!-- Новая кнопка -->
+  <a href="{{ url_for('my_orders') }}" class="btn">Мои заказы</a>
+
   <h3>Мои заказы</h3>
   {% if orders %}
     <ul class="orders-list">

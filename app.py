@@ -1,7 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, flash, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
@@ -16,9 +14,9 @@ db = SQLAlchemy(app)
 # ------------------ МОДЕЛИ ------------------ #
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
+    username = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(200), nullable=False)
-        
+    orders = db.relationship('Order', backref='user', lazy=True)
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -29,46 +27,154 @@ class Product(db.Model):
 
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    items = db.Column(db.String(500))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     total_price = db.Column(db.Float, nullable=False)
+    items = db.Column(db.Text, nullable=False)  # возможно, это JSON или строка
+    status = db.Column(db.String(50), default='В ожидании')
 
 # ------------------ МАРШРУТЫ ------------------ #
+
 @app.route('/')
 def index():
     return render_template('index.html')
-
 
 @app.route('/menu')
 def menu():
     products = Product.query.all()
     return render_template('menu.html', products=products)
 
-@app.route('/add_to_cart/<int:product_id>')
+@app.route('/add_to_cart/<int:product_id>', methods=['POST'])
 def add_to_cart(product_id):
-    cart = session.get('cart', [])
-    cart.append(product_id)
+    cart = session.get('cart', {})
+    cart = dict(cart)
+    product_id = str(product_id)
+
+    if product_id in cart:
+        cart[product_id] += 1
+    else:
+        cart[product_id] = 1
+
     session['cart'] = cart
+    flash('Товар добавлен в корзину.')
     return redirect(url_for('menu'))
+
+@app.route('/admin/update_order_status/<int:order_id>', methods=['POST'])
+def update_order_status(order_id):
+    new_status = request.form['status']
+    order = Order.query.get(order_id)
+    if order:
+        order.status = new_status
+        db.session.commit()
+    return redirect(url_for('admin'))
+
+@app.route('/my_orders')
+def my_orders():
+    user_id = session.get('user_id')
+    orders = Order.query.filter_by(user_id=user_id).all()
+
+    enriched_orders = []
+    for order in orders:
+        product_ids = [int(pid) for pid in order.items.split(',') if pid.strip()]
+        products = Product.query.filter(Product.id.in_(product_ids)).all()
+        enriched_orders.append({
+            'id': order.id,
+            'total_price': order.total_price,
+            'products': products
+        })
+
+    return render_template('my_orders.html', orders=enriched_orders)
+
+
+
+
+@app.route('/remove_from_cart/<int:product_id>', methods=['GET', 'POST'])
+def remove_from_cart(product_id):
+    cart = session.get('cart', {})
+    product_id = str(product_id)
+
+    if product_id in cart:
+        cart.pop(product_id)
+
+    session['cart'] = cart
+    flash('Товар удален из корзины.')
+    return redirect(url_for('cart'))
 
 @app.route('/cart')
 def cart():
-    cart = session.get('cart', [])
-    products = Product.query.filter(Product.id.in_(cart)).all() if cart else []
-    total = sum([p.price for p in products])
-    return render_template('cart.html', products=products, total=total)
+    if not session.get('user_id'):
+        return redirect(url_for('login'))
+
+    cart = session.get('cart', {})
+    products = []
+    total = 0
+
+    for product_id, quantity in cart.items():
+        product = Product.query.get(int(product_id))
+        if product:
+            product.quantity = quantity
+            products.append(product)
+            total += product.price * quantity
+
+    return render_template('cart.html', products=products, total=total, cart=cart)
+
+@app.route('/update_cart', methods=['POST'])
+def update_cart():
+    if not session.get('user_id'):
+        return redirect(url_for('login'))
+
+    cart = {}
+
+    for key, value in request.form.items():
+        if key.startswith('quantity_'):
+            try:
+                product_id = key.split('_')[1]
+                quantity = int(value)
+                if quantity > 0:
+                    cart[product_id] = quantity
+            except (IndexError, ValueError):
+                continue  # если формат некорректный, пропустить
+
+    session['cart'] = cart
+    flash('Корзина обновлена.')
+    return redirect(url_for('cart'))
+
+@app.route('/cart/update_quantity/<int:product_id>/<action>', methods=['POST'])
+def update_quantity(product_id, action):
+    cart = session.get('cart', {})
+    product_id_str = str(product_id)
+
+    if product_id_str in cart:
+        if action == 'increase':
+            cart[product_id_str] += 1
+        elif action == 'decrease' and cart[product_id_str] > 1:
+            cart[product_id_str] -= 1
+        elif action == 'decrease' and cart[product_id_str] == 1:
+            cart.pop(product_id_str)  # можно сразу удалить товар, если 1 → 0
+
+    session['cart'] = cart
+    return redirect(url_for('cart'))
+
+
 
 @app.route('/checkout')
 def checkout():
-    cart = session.get('cart', [])
+    cart = session.get('cart', {})
     if not cart:
         return redirect(url_for('menu'))
-    products = Product.query.filter(Product.id.in_(cart)).all()
-    total = sum([p.price for p in products])
-    item_ids = ','.join(map(str, cart))
+
     user_id = session.get('user_id')
     if not user_id:
         return redirect(url_for('login'))
+
+    total = 0
+    product_ids = []
+    for product_id, quantity in cart.items():
+        product = Product.query.get(int(product_id))
+        if product:
+            total += product.price * quantity
+            product_ids.extend([product_id] * quantity)
+
+    item_ids = ','.join(product_ids)
     order = Order(user_id=user_id, items=item_ids, total_price=total)
     db.session.add(order)
     db.session.commit()
@@ -77,20 +183,20 @@ def checkout():
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
-    if not session.get('is_admin'):
-        return redirect(url_for('login'))
-
     if request.method == 'POST':
         name = request.form['name']
         description = request.form['description']
-        price = float(request.form['price'])
+        price = request.form['price']
         image_url = request.form['image_url']
         product = Product(name=name, description=description, price=price, image_url=image_url)
         db.session.add(product)
         db.session.commit()
         return redirect(url_for('admin'))
+
     products = Product.query.all()
-    return render_template('admin.html', products=products)
+    orders = Order.query.order_by(Order.id.desc()).all()  # загрузим все заказы
+    return render_template('admin.html', products=products, orders=orders)
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -115,6 +221,8 @@ def login():
             session['username'] = user.username
             session['is_admin'] = user.username == 'admin'
             return redirect(url_for('profile'))
+        else:
+            flash('Неверные имя пользователя или пароль')
     return render_template('login.html')
 
 @app.route('/logout')
@@ -152,4 +260,4 @@ def edit_profile():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=80, use_reloader=False, debug=True)

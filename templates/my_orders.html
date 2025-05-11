@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Мои заказы</h2>
+
+    {% if orders %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Номер заказа</th>
+                    <th>Сумма</th>
+                    <th>Статус</th>
+                    <th>Состав заказа</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                    <div class="order">
+                        <h4>Заказ #{{ order.id }}</h4>
+                        <p>Сумма: {{ order.total_price }} ₽</p>
+                        <ul>
+                        {% for product in order.products %}
+                            <li>{{ product.name }}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>У вас пока нет заказов.</p>
+    {% endif %}
+</div>
+{% endblock %}

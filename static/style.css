@@ -1,23 +1,42 @@
 /* Основные стили */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #2B190E;  /* темно-коричневый */
-    color: #E8C18D;  /* бежевый */
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #18191a;  /* темный */
+    color: #F5F5DC    ;  /* бежевый */
     margin: 0;
     padding: 0;
 }
 
 header {
     display: flex;
+    position: relative;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-end;
     padding: 20px;
-    background-color: #A94518; /* оранжевый акцент */
+    background-color: #18191a; /* оранжевый акцент */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* лёгкая тень */
 }
 
+.image-container1 {
+    background-image: url("images/Restaurant1.jpg");
+    background-size: cover;
+    height: max-content;
+    background-attachment :fixed;
+    height: 400px;
+
+}
+
+.image-container2 {
+    background-image: url("images/Restaurant2.jpg");
+    width: 600px;
+    height: 400px;
+}
+
 header .logo img {
-    height: 50px;
+    display: flex;
+    ;
+    justify-content: left;
+    height: 85px;
 }
 
 header nav a {
@@ -28,33 +47,76 @@ header nav a {
 }
 
 header nav a:hover {
-    color: #2B190E;  /* темно-коричневый */
+    color: #000000;  /* темно-коричневый */
 }
 
-/* Иконки профиля и корзины */
+/* Линия с иконками профиля и корзины */
+/* Основной стиль для шапки */
+.top-bar {
+    display: flex;
+    justify-content: space-between; /* Разделяем пространство между логотипом и правой частью */
+    align-items: center;
+    background-color: #A94518; /* Оранжевый */
+    padding: 15px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+}
+
+.logo a {
+    display: flex;
+}
+
+.logo img {
+    height: 40px; /* Размер логотипа */
+}
+
+.right-nav {
+    display: flex;
+    padding-left: 250px;
+}
+
+.left-nav a {
+    color: #E8C18D;  /* Бежевый */
+    text-decoration: none;
+    margin-right: 20px;
+    font-size: 28px;
+    transition: color 0.3s ease;
+    justify-items: right;
+    align-items: right;
+}
+
+.left-nav a:hover {
+    color: #fff;
+}
+
 .profile-cart {
     display: flex;
-    align-items: center;
+    justify-items: right;
+    align-items: right;
     gap: 15px;
+    padding-left: 70px;
 }
 
 .header-icon {
-    text-decoration: none;
-    background-color: transparent;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: #18191a;
     padding: 8px;
-    border-radius: 8px;
+    border-radius: 10px;
     transition: background-color 0.3s, transform 0.2s;
 }
 
 .header-icon img {
-    width: 30px; /* Размер иконки */
-    height: 30px;
+    width: 45px;
+    height: 45px;
 }
 
 .header-icon:hover {
-    background-color: #2B190E;  /* темно-коричневый */
+    background-color: #fff;
     transform: scale(1.05);
 }
+
 
 .container {
     max-width: 1200px;
@@ -219,7 +281,7 @@ footer p {
     text-align: center;
     text-decoration: none;
     border-radius: 5px;
-    background-color: #A94518; /* оранжевый акцент */
+    background-color: #228b22; /* оранжевый акцент */
     color: #fff;
     margin: 10px 0;
     cursor: pointer;

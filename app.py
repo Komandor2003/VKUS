@@ -258,9 +258,14 @@ def edit_profile():
     return render_template('edit_profile.html', user=user)
 
 @app.route('/delivery')
-def my_orders():
+def delivery():
 
     return render_template('delivery.html')
+
+@app.route('/booking')
+def booking():
+
+    return render_template('booking.html')
 
 if __name__ == '__main__':
     with app.app_context():

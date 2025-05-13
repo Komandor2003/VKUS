@@ -257,6 +257,11 @@ def edit_profile():
         return redirect(url_for('profile'))
     return render_template('edit_profile.html', user=user)
 
+@app.route('/delivery')
+def my_orders():
+
+    return render_template('delivery.html')
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

@@ -4,6 +4,7 @@
 
 {% block content %}
 <div class="profile-container">
+
   <h2>Добро пожаловать, {{ user.username }}!</h2>
 <div class="profile-actions">
   <a href="{{ url_for('edit_profile') }}" class="btn">Редактировать профиль</a>
@@ -16,26 +17,40 @@
 </div>
   <h3>Мои заказы</h3>
   {% if orders %}
-    <ul class="orders-list">
-      {% for order in orders %}
-        <li>
-          <strong>Заказ #{{ order.id }}</strong><br>
-          Сумма: {{ order.total_price }} ₽<br>
-          Состав: 
-          {% set product_ids = order.items.split(',') %}
-          <ul>
-            {% for pid in product_ids %}
+  <div class="orders-grid">
+    {% for order in orders %}
+      <div class="order-card">
+        <strong>Заказ #{{ order.id }}</strong><br>
+        Сумма: {{ order.total_price }} ₽<br>
+        {% set product_ids = order.items.split(',') %}
+        {% set unique_ids = [] %}
+  
+        <ul class = "order-products">
+          {% for pid in product_ids %}
+            {% if pid not in unique_ids %}
+              {% set _ = unique_ids.append(pid) %}
+              {% set ns = namespace(count=0) %}
+              {% for p in product_ids %}
+                {% if p == pid %}
+                  {% set ns.count = ns.count + 1 %}
+                {% endif %}
+              {% endfor %}
               {% set product = Product.query.get(pid|int) %}
               {% if product %}
-                <li>{{ product.name }}</li>
+                <li>{{ product.name }}  </li>
+                <h>{{ ns.count }} шт.  — {{product.price * ns.count}}р. </h>
               {% else %}
-                <li>Товар (удалён)</li>
+                <li>Товар (удалён) — {{ ns.count }} шт.</li>
               {% endif %}
-            {% endfor %}
-          </ul>
-        </li>
-      {% endfor %}
-    </ul>
+            {% endif %}
+          {% endfor %}
+        </ul>
+        <form action="{{ url_for('repeat_order', order_id=order.id) }}" method="post">
+          <button type="submit" class="btn repeat-order-btn">Повторить заказ</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
   {% else %}
     <p>У вас пока нет заказов.</p>
   {% endif %}

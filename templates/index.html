@@ -1,7 +1,13 @@
 {% extends 'base.html' %}
 {% block title %}Главная{% endblock %}
 {% block content %}
-<h1>Это будет главная страница вашего ресторана</h1>
-<p>Вкусно. Быстро. Удобно.</p>
-<div class="image-container1"></div>
+<div class="homepage-container">
+  <div class="hero">
+    <h1>Добро пожаловать в наш ресторан</h1>
+    <p class="subtitle">Вкусно. Быстро. Удобно.</p>
+    <a href="{{ url_for('menu') }}" class="btn btn-primary">Смотреть меню</a>
+  </div>
+
+  <div class="image-container1"></div>
+</div>
 {% endblock %}

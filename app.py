@@ -2,6 +2,8 @@ from flask import Flask, flash, render_template, request, redirect, url_for, ses
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+from flask import g
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -271,6 +273,105 @@ def booking():
 def loyality():
 
     return render_template('loyality.html')
+
+@app.route('/repeat_order/<int:order_id>', methods=['POST'])
+def repeat_order(order_id):
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))
+
+    order = Order.query.filter_by(id=order_id, user_id=user_id).first()
+    if not order:
+        flash("Заказ не найден.")
+        return redirect(url_for('profile'))
+
+    cart = session.get('cart', {})
+    cart = dict(cart)
+
+    product_ids = [int(pid) for pid in order.items.split(',') if pid.strip()]
+    for pid in product_ids:
+        pid_str = str(pid)
+        if pid_str in cart:
+            cart[pid_str] += 1
+        else:
+            cart[pid_str] = 1
+
+    session['cart'] = cart
+    flash("Товары из заказа добавлены в корзину.")
+    return redirect(url_for('cart'))
+
+@app.route('/cart/ajax_update_quantity', methods=['POST'])
+def ajax_update_quantity():
+    if not session.get('user_id'):
+        return {'success': False, 'message': 'Пользователь не авторизован'}, 403
+
+    data = request.get_json()
+    product_id = str(data.get('product_id'))
+    action = data.get('action')
+    cart = session.get('cart', {})
+
+    if product_id in cart:
+        if action == 'increase':
+            cart[product_id] += 1
+        elif action == 'decrease':
+            cart[product_id] -= 1
+            if cart[product_id] <= 0:
+                cart.pop(product_id)
+    session['cart'] = cart
+
+    # Пересчитываем общую стоимость
+    total = 0
+    for pid, quantity in cart.items():
+        product = Product.query.get(int(pid))
+        if product:
+            total += product.price * quantity
+
+    return {
+        'success': True,
+        'quantity': cart.get(product_id, 0),
+        'total': total
+    }
+
+@app.route('/cart/ajax_remove_product', methods=['POST'])
+def ajax_remove_product():
+    if not session.get('user_id'):
+        return {'success': False, 'message': 'Пользователь не авторизован'}, 403
+
+    data = request.get_json()
+    product_id = str(data.get('product_id'))
+    cart = session.get('cart', {})
+
+    if product_id in cart:
+        cart.pop(product_id)
+        session['cart'] = cart
+
+    # Пересчет общей суммы
+    total = 0
+    for pid, quantity in cart.items():
+        product = Product.query.get(int(pid))
+        if product:
+            total += product.price * quantity
+
+    return {
+        'success': True,
+        'total': total
+    }
+
+@app.route('/cart/ajax_add/<int:product_id>', methods=['POST'])
+def ajax_add_to_cart(product_id):
+    if not session.get('user_id'):
+        return {'success': False, 'message': 'Пользователь не авторизован'}, 403
+
+    cart = session.get('cart', {})
+    product_id_str = str(product_id)
+
+    cart[product_id_str] = cart.get(product_id_str, 0) + 1
+    session['cart'] = cart
+
+    total_items = sum(cart.values())
+
+    return {'success': True, 'total_items': total_items}
+
 
 if __name__ == '__main__':
     with app.app_context():

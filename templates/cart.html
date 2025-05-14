@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>Корзина</h2>
+<div class="cart-container">
+    <h2>Ваш заказ</h2>
     {% if products %}
     <table class="table">
         <thead>
@@ -10,15 +10,18 @@
                 <th>Продукт</th>
                 <th>Цена</th>
                 <th>Количество</th>
-                <th>Удалить</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             {% for product in products %}
             <tr>
-                <td>{{ product.name }}</td>
-                <td>{{ product.price }} ₽</td>
                 <td>
+                    <img src="{{ product.image_url }}" alt="{{ product.name }}" style="max-height: 60px; display: block; margin: 0 auto 6px;">
+                    {{ product.name }}
+                </td>
+                <td>{{ product.price }} ₽</td>
+                <!-- <td>
                     <div class="d-flex align-items-center">
                         <form method="POST" action="{{ url_for('update_quantity', product_id=product.id, action='decrease') }}">
                             <button class="btn btn-outline-secondary btn-sm" type="submit">−</button>
@@ -28,10 +31,17 @@
                             <button class="btn btn-outline-secondary btn-sm" type="submit">+</button>
                         </form>
                     </div>
+                </td> -->
+                <td>
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="updateQuantity({{ product.id }}, 'decrease')">−</button>
+                        <span class="mx-2" id="quantity-{{ product.id }}">{{ cart[product.id|string] }}</span>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="updateQuantity({{ product.id }}, 'increase')">+</button>
+                    </div>
                 </td>
                 <td>
-                    <a href="{{ url_for('remove_from_cart', product_id=product.id) }}" class="btn btn-danger">Удалить</a>
-                </td>
+                    <button class="btn btn-danger" onclick="removeFromCart({{ product.id }})">Удалить</button>
+                </td>                
             </tr>
             {% endfor %}
         </tbody>
@@ -44,4 +54,78 @@
     <p>В вашей корзине нет товаров.</p>
     {% endif %}
 </div>
+<script>
+    function updateQuantity(productId, action) {
+        fetch("/cart/ajax_update_quantity", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                action: action,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const qtySpan = document.getElementById(`quantity-${productId}`);
+                const newQty = data.quantity;
+    
+                if (qtySpan) {
+                    if (newQty > 0) {
+                        qtySpan.textContent = newQty;
+                    } else {
+                        // Перезагрузить страницу или удалить элемент из DOM
+                        location.reload();
+                    }
+                }
+    
+                const totalEl = document.querySelector("h3");
+                if (totalEl) {
+                    totalEl.textContent = `Итого: ${data.total} ₽`;
+                }
+            } else {
+                alert("Не удалось обновить количество.");
+            }
+        });
+    }
+    </script>
+    
+    <script>
+        function removeFromCart(productId) {
+            fetch("/cart/ajax_remove_product", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    product_id: productId
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const row = document.querySelector(`button[onclick="removeFromCart(${productId})"]`).closest("tr");
+                    if (row) {
+                        row.remove();
+                    }
+        
+                    const totalEl = document.querySelector("h3");
+                    if (totalEl) {
+                        totalEl.textContent = `Итого: ${data.total} ₽`;
+                    }
+        
+                    // Если корзина пуста — покажи сообщение
+                    const tbody = document.querySelector("tbody");
+                    if (!tbody.querySelector("tr")) {
+                        document.querySelector(".cart-container").innerHTML = "<p>В вашей корзине нет товаров.</p>";
+                    }
+                } else {
+                    alert("Не удалось удалить товар.");
+                }
+            });
+        }
+        </script>
+        
 {% endblock %}

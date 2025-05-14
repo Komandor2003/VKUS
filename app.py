@@ -267,6 +267,11 @@ def booking():
 
     return render_template('booking.html')
 
+@app.route('/loyality')
+def loyality():
+
+    return render_template('loyality.html')
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

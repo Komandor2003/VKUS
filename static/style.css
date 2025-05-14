@@ -119,15 +119,75 @@ header nav a:hover {
 
 
 .container {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 0 20px;
+    max-width: 400px;
+    margin: 80px auto;
+    padding: 30px 70px;
+    background-color: #A94518;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
+    padding-right: 10px;
     text-align: center;
-    font-size: 2rem;
-    color: #E8C18D;  /* бежевый */
+    margin-bottom: 25px;
+    color: #222;
+}
+.form-group {
+    padding-right: 30px;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+input.form-control {
+    padding-right: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 16px;
+    border: 1px solid #E8C18D;
+    border-radius: 6px;
+    background-color: #E8C18D;
+    transition: border 0.2s;
+}
+
+input.form-control:focus {
+    border-color: #18191a;
+    outline: none;
+}
+
+button.btn-primary {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    background-color: #18191a;
+    color: #E8C18D;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button.btn-primary:hover {
+    background-color: #A94518;
+}
+
+.btn-link {
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #18191a;
+    text-decoration: none;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
 }
 
 .product-grid {
@@ -258,38 +318,135 @@ footer p {
 .profile-container {
     max-width: 900px;
     margin: 40px auto;
-    padding: 20px;
-    background-color: #E8C18D; /* Бежевый */
-    border-radius: 8px;
+    padding: 30px 40px;
+    background-color: #18191a;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    color: #e8dac8;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
 }
 
-.profile-container h1 {
+.profile-container h2,
+.profile-container h3 {
     text-align: center;
-    color: #2B190E; /* Темно-коричневый */
+    margin-bottom: 20px;
+    color: #f1e8db;
+}
+
+.profile-container .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    background-color: #3a3b3c;
+    color: #e8dac8;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.profile-container .btn:hover {
+    background-color: #E8C18D;
+    color: #2B190E;
+    transform: translateY(-2px);
+}
+
+.profile-container .logout {
+    background-color: #8b0000;
+}
+
+.profile-container .logout:hover {
+    background-color: #ff4c4c;
+    color: #fff;
+}
+
+.profile-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+}
+
+.logout-wrapper {
+    margin-left: auto;
+}
+
+.orders-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.orders-list > li {
+    background-color: #242526;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.orders-list strong {
+    color: #e8dac8;
+    font-size: 16px;
+}
+
+.orders-list ul {
+    margin-top: 8px;
+    padding-left: 20px;
+}
+
+.orders-list li li {
+    font-size: 14px;
+    color: #d0c4b2;
 }
 
 .profile-actions {
     text-align: center;
     margin-top: 30px;
 }
-/* Стили для кнопки регистрации на странице профиля */
-.profile-container .btn-register {
-    display: inline-block;
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 5px;
-    background-color: #228b22; /* оранжевый акцент */
-    color: #fff;
-    margin: 10px 0;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+
+div {
+    box-sizing: border-box;
 }
 
-.profile-container .btn-register:hover {
-    background-color: #E8C18D; /* бежевый */
-    color: #2B190E; /* темно-коричневый */
-    transform: translateY(-2px); /* Легкое поднятие кнопки при наведении */
+
+/* Обёртка для двух колонок */
+.delivery-container {
+    display: flex;
+    justify-content: center;      /* Центрируем по горизонтали */
+    gap: 100px;                    /* Расстояние между колонками */
+    padding: 40px 20px;
+    flex-wrap: wrap;    
+}
+
+/* Каждая колонка */
+.delivery-block {
+    flex: 1 1 0;
+    max-width: 700px;
+    background-color: #000000;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.map-block {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+
+}
+
+.delivery-block h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #ede3cc;
+}
+
+.delivery-block p {
+    font-size: 16px;
+    color: #ede3cc ;
 }

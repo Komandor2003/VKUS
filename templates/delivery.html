@@ -4,8 +4,45 @@
 <div class="delivery-container">
     <div class="delivery-block">
         <h1>Доставка</h1>
-        <p>Доставка осуществляется в пределах МКАД, стоимость от 399р, заполните ниже адрес доставки</p>
+        <p>Доставка осуществляется в пределах МКАД, стоимость от 399р.</p>
+    
+        {% if not authorized %}
+            <p>Сначала <a href="{{ url_for('profile') }}" class="orange-link">авторизуйтесь</a>, чтобы указать адрес доставки.</p>
+        {% else %}
+            <form method="POST" class="address-form">
+                <label>Город:</label>
+                <input type="text" name="city" value="{{ city }}"><br>
+    
+                <label>Улица:</label>
+                <input type="text" name="street" value="{{ street }}"><br>
+    
+                <label>Дом:</label>
+                <input type="text" name="house" value="{{ house }}"><br>
+    
+                <label>Корпус:</label>
+                <input type="text" name="building" value="{{ building }}"><br>
+    
+                <label>Домофон:</label>
+                <input type="text" name="intercom" value="{{ intercom }}"><br>
+    
+                <label>Комментарий:</label>
+                <textarea name="comment">{{ comment }}</textarea><br>
+    
+                <input type="submit" value="Сохранить" class="save-btn">
+            </form>
+    
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <ul class="flashes">
+                  {% for category, message in messages %}
+                    <li class="flash {{ category }}">{{ message }}</li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            {% endwith %}
+        {% endif %}
     </div>
+    
     <div class="delivery-block">
         <h1>Самовывоз</h1>
         <p>Самовывоз возможен по адресу г.Москва ул.Тверской проезд д.2</p>

@@ -1,6 +1,71 @@
 {% extends 'base.html' %}
 {% block title %}Бронирование{% endblock %}
 {% block content %}
-<h1>Здесь будет ваша страница Бронирования столиков</h1>
-<p>Вкусно. Быстро. Удобно.</p>
+<div class="reservation-container">
+    <h2>Забронировать столик</h2>
+    <form class="reservation-form" method="POST" action="{{ url_for('book_table') }}">
+      <div class="form-group">
+        <label for="name">Имя</label>
+        <input type="text" id="name" name="name" required class="form-control" placeholder="Ваше имя">
+      </div>
+      <div class="form-group">
+        <label for="phone">Телефон</label>
+        <input type="tel" id="phone" name="phone" required class="form-control" placeholder="+7 (___) ___-__-__">
+      </div>
+      <div class="form-group">
+        <label for="date">Дата</label>
+        <input type="date" id="date" name="date" required class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="time">Время</label>
+        <input type="time" id="time" name="time" required class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="guests">Количество гостей</label>
+        <div class="custom-select-wrapper">
+            
+            <div class="custom-select" tabindex="0" id="guests-select">
+              <span class="selected">Выберите</span>
+              <ul class="options">
+                <li data-value="1">1 гость</li>
+                <li data-value="2">2 гостя</li>
+                <li data-value="3">3 гостя</li>
+                <li data-value="4">4 гостя</li>
+                <li data-value="5+">5 и более</li>
+              </ul>
+            </div>
+            <input type="hidden" name="guests" id="guests" required>
+          </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Забронировать</button>
+    </form>
+</div>
+  
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const select = document.getElementById('guests-select');
+    const selected = select.querySelector('.selected');
+    const optionsContainer = select.querySelector('.options');
+    const optionsList = optionsContainer.querySelectorAll('li');
+    const hiddenInput = document.getElementById('guests');
+  
+    select.addEventListener('click', () => {
+      select.classList.toggle('open');
+    });
+  
+    optionsList.forEach(option => {
+      option.addEventListener('click', () => {
+        selected.textContent = option.textContent;
+        hiddenInput.value = option.getAttribute('data-value');
+        select.classList.remove('open');
+      });
+    });
+  
+    document.addEventListener('click', e => {
+      if (!select.contains(e.target)) {
+        select.classList.remove('open');
+      }
+    });
+  });
+</script>
 {% endblock %}

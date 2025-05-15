@@ -242,10 +242,10 @@ header nav a:hover {
 
 
 .container {
-    max-width: 400px;
+    max-width: 1200px;
     margin: 80px auto;
     padding: 30px 70px;
-    background-color: #A94518;
+    background-color: #101010;
     border-radius: 8px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
@@ -301,8 +301,7 @@ button.btn-primary:hover {
 
 .btn-link {
     display: inline-block;
-    text-align: center;
-    width: 100%;
+    width: 220px;
     margin-top: 10px;
     font-size: 14px;
     color: #18191a;
@@ -312,60 +311,60 @@ button.btn-primary:hover {
 .btn-link:hover {
     text-decoration: underline;
 }
-
 .product-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(3, 1fr); /* 3 равные колонки */
     gap: 20px;
-    margin-top: 30px;
-}
-
-.product-card {
-    background-color: #E8C18D;  /* бежевый фон */
-    color: #2B190E;  /* темно-коричневый */
-    border-radius: 10px;
-    padding: 15px;
+    margin-top: 20px;
+  }
+  
+  .product-card {
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    box-shadow: 0 0 8px #00000030;
-    transition: transform 0.2s ease;
-}
-
-.product-card:hover {
-    transform: scale(1.03);
-}
-
-.product-card img {
+    transition: transform 0.2s;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  .product-card img {
     max-width: 100%;
+    height: auto;
     border-radius: 8px;
-    height: 180px;
-    object-fit: cover;
-    margin-bottom: 10px;
-}
-
-.product-card h3 {
-    margin: 10px 0 5px;
-}
-
-.product-card .price {
+  }
+  
+  .product-card h3 {
+    margin-top: 12px;
+    font-size: 1.2em;
+  }
+  
+  .product-card .price {
+    color: #e67e22;
     font-weight: bold;
-    margin-bottom: 10px;
-    font-size: 18px;
-}
-
-.product-card button {
-    background-color: #A94518; /* оранжевый акцент */
+    margin: 8px 0;
+  }
+  
+  .product-card button {
+    background-color: #ff8c00;
     color: white;
     border: none;
-    padding: 8px 14px;
-    border-radius: 5px;
+    padding: 10px 16px;
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 15px;
-    transition: background-color 0.3s ease;
-}
-
-.product-card button:hover {
-    background-color: #8a350f; /* тёмно-оранжевый */
-}
+    transition: background-color 0.3s;
+  }
+  
+  .product-card button:hover {
+    background-color: #e67600;
+  }
+  
 
 /* СТРАНИЦА checkout */
 .checkout-success {
@@ -604,6 +603,39 @@ div {
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
+.delivery-block form input,
+.delivery-block form textarea {
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 10px;
+    padding: 6px;
+}
+
+.save-btn {
+    background-color: #A94518; /* Оранжевый */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.save-btn:hover {
+    background-color: #db865f; /* Темнее при наведении */
+}
+
+
+.flashes {
+    list-style-type: none;
+    padding: 0;
+    color: green;
+}
+
+
 .map-block {
     display: flex;
     justify-content: center;
@@ -621,6 +653,17 @@ div {
     font-size: 16px;
     color: #ede3cc ;
 }
+
+.orange-link {
+    color: #A94518;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  
+  .orange-link:hover {
+    text-decoration: underline;
+  }
+  
 
 .orders-grid {
     display: grid;
@@ -687,7 +730,7 @@ div {
 
 .hero .btn {
     font-size: 18px;
-
+}
 
   /* Админ панель */
   .admin-container {
@@ -751,3 +794,253 @@ div {
     color: #2B190E;
     transform: translateY(-2px);
 }
+
+/* Бронирование */
+.reservation-container {
+    max-width: 400px !important;
+    margin: 40px auto !important;
+    padding: 30px 30px !important;
+    background-color: #191919;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    color: #e8dac8;
+    font-family: 'Courier New', Courier, monospace;
+    text-align: center;
+  }
+  
+  .reservation-container h2 {
+    font-size: 28px;
+    margin-bottom: 25px;
+    color: #e8dac8 ;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: #E8C18D;
+    letter-spacing: 0.8px;
+    font-size: 16px;
+  }
+  
+  input.form-control,
+  select.form-control {
+    padding: 10px 12px;
+    color: #000000;
+    font-size: 14px;
+  }
+
+  input.form-control::placeholder,
+select.form-control::placeholder {
+  color: rgba(2, 2, 2, 0.6); /* светло-бежевый с прозрачностью 60% */
+}
+
+input[type="date"],
+input[type="time"] {
+  color: #e8dac8;             /* основной цвет текста */
+  background-color: #242526;  /* фон */
+  border: 1.8px solid #E8C18D;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+input[type="date"]::placeholder,
+input[type="time"]::placeholder {
+  color: rgba(232, 193, 141, 0.6); /* цвет placeholder */
+}
+
+input[type="date"]:focus,
+input[type="time"]:focus {
+  border-color: #A94518;
+  box-shadow: 0 0 8px #A94518;
+  outline: none;
+}
+
+  input.form-control:focus,
+  select.form-control:focus {
+    border-color: #A94518;
+    box-shadow: 0 0 8px #A94518;
+    outline: none;
+  }
+  
+
+  .btn-primary {
+    padding: 12px;
+    font-size: 16px;
+  }
+  
+  .btn-primary:hover {
+    background-color: #E8C18D;
+    color: #2B190E;
+    transform: translateY(-3px);
+  }  
+
+/* Выподающая менюшка выбора гостей */
+.custom-select-wrapper {
+    display: flex;
+    width: 100%;
+     max-width: 400px;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+    text-align: left;
+  }
+  
+  .custom-select-wrapper label {
+    display: block;
+    width: 100%;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: #E8C18D;
+    letter-spacing: 0.8px;
+    font-size: 16px;
+  }
+  
+  .custom-select {
+    position: relative;
+    background-color: #242526;
+    border: 1.8px solid #E8C18D;
+    border-radius: 8px;
+    padding: 10px 24px;
+    color: #E8C18D;
+    font-size: 14px;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .custom-select:focus {
+    border-color: #A94518;
+    box-shadow: 0 0 8px #A94518;
+    outline: none;
+  }
+  
+  .custom-select .selected {
+    display: block;
+  }
+  
+  .custom-select .options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #242526;
+    border: 1.8px solid #E8C18D;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    z-index: 100;
+  }
+  
+  .custom-select.open .options {
+    max-height: 180px;
+    overflow-y: auto;
+  }
+  
+  .custom-select .options li {
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .custom-select .options li:hover {
+    background-color: #A94518;
+    color: #fff;
+  }
+  
+
+  /* Редактирование профиля */
+
+  /* Контейнер формы */
+form {
+    max-width: 400px;
+    margin: 40px auto;
+    padding: 30px 40px;
+    background-color: #191919;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    color: #e8dac8;
+    font-family: 'Courier New', Courier, monospace;
+  }
+  
+  /* Заголовок */
+  h2 {
+    margin-top: 100px; /* отступ сверху */
+    text-align: center;
+    color: #E8C18D;
+    margin-bottom: 30px;
+    font-size: 28px;
+    letter-spacing: 1.1px;
+    text-transform: uppercase;
+  }
+  
+  /* Блок с label и input */
+  form > div {
+    margin-bottom: 20px;
+    text-align: left;
+  }
+  
+  /* Подписи к полям */
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: #E8C18D;
+    letter-spacing: 0.8px;
+    font-size: 16px;
+  }
+  
+  /* Инпуты */
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 16px;
+    color: #e8dac8;
+    background-color: #242526;
+    border: 1.8px solid #E8C18D;
+    border-radius: 8px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  input[type="text"]::placeholder,
+  input[type="password"]::placeholder {
+    color: rgba(232, 193, 141, 0.6);
+  }
+  
+  input[type="text"]:focus,
+  input[type="password"]:focus {
+    border-color: #A94518;
+    box-shadow: 0 0 8px #A94518;
+    outline: none;
+  }
+  
+  /* Кнопка */
+  .btn-secondary {
+    display: block;
+    width: 100%;
+    padding: 14px 0;
+    font-size: 18px;
+    font-weight: 700;
+    background-color: #E8C18D;
+    color: #2B190E;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 15px;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #A94518;
+    color: #fff;
+    transform: translateY(-3px);
+  }
+  

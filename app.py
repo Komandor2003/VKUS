@@ -19,6 +19,7 @@ class User(db.Model):
     username = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(200), nullable=False)
     orders = db.relationship('Order', backref='user', lazy=True)
+    adress = db.Column(db.String(300))
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -33,8 +34,51 @@ class Order(db.Model):
     total_price = db.Column(db.Float, nullable=False)
     items = db.Column(db.Text, nullable=False)  # возможно, это JSON или строка
     status = db.Column(db.String(50), default='В ожидании')
+    
+class Reservation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # если нужен юзер
+    name = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    time = db.Column(db.Time, nullable=False)
+    guests = db.Column(db.String(20), nullable=False)  # например, '3' или '5+'
+
 
 # ------------------ МАРШРУТЫ ------------------ #
+
+from datetime import datetime
+
+@app.route('/book_table', methods=['GET', 'POST'])
+def book_table():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        phone = request.form.get('phone')
+        date_str = request.form.get('date')
+        time_str = request.form.get('time')
+        guests = request.form.get('guests')
+
+        # Валидация
+        if not all([name, phone, date_str, time_str, guests]):
+            flash('Пожалуйста, заполните все поля')
+            return redirect(url_for('book_table'))
+
+        try:
+            date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            time = datetime.strptime(time_str, '%H:%M').time()
+        except ValueError:
+            flash('Некорректная дата или время')
+            return redirect(url_for('book_table'))
+
+        reservation = Reservation(name=name, phone=phone, date=date, time=time, guests=guests)
+        db.session.add(reservation)
+        db.session.commit()
+
+        flash('Столик успешно забронирован!')
+        return redirect(url_for('book_table'))
+
+    return render_template('booking.html')
+
 
 @app.route('/')
 def index():
@@ -202,15 +246,24 @@ def admin():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    error = None
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        hashed_password = generate_password_hash(password)
-        user = User(username=username, password=hashed_password)
-        db.session.add(user)
-        db.session.commit()
-        return redirect(url_for('login'))
-    return render_template('register.html')
+
+        # Проверка, существует ли уже пользователь с таким именем
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            error = 'Имя пользователя уже занято. Пожалуйста, выберите другое.'
+        else:
+            hashed_password = generate_password_hash(password)
+            user = User(username=username, password=hashed_password)
+            db.session.add(user)
+            db.session.commit()
+            return redirect(url_for('login'))
+
+    return render_template('register.html', error=error)
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -259,10 +312,43 @@ def edit_profile():
         return redirect(url_for('profile'))
     return render_template('edit_profile.html', user=user)
 
-@app.route('/delivery')
+@app.route('/delivery', methods=['GET', 'POST'])
 def delivery():
+    user_id = session.get('user_id')
 
-    return render_template('delivery.html')
+    # Проверка авторизации
+    if not user_id:
+        return render_template('delivery.html', authorized=False)
+
+    user = User.query.get(user_id)
+
+    if request.method == 'POST':
+        city = request.form.get('city')
+        street = request.form.get('street')
+        house = request.form.get('house')
+        building = request.form.get('building')
+        intercom = request.form.get('intercom')
+        comment = request.form.get('comment')
+
+        user.adress = f"{city}, {street}, {house}, {building}, {intercom}, {comment}"
+        db.session.commit()
+        flash("Адрес обновлен!", "success")
+        return redirect(url_for('delivery'))
+
+    parts = user.adress.split(',') if user and user.adress else [""] * 6
+    city, street, house, building, intercom, comment = [part.strip() for part in parts] + [""] * (6 - len(parts))
+
+    return render_template(
+        'delivery.html',
+        authorized=True,
+        city=city,
+        street=street,
+        house=house,
+        building=building,
+        intercom=intercom,
+        comment=comment
+    )
+
 
 @app.route('/booking')
 def booking():

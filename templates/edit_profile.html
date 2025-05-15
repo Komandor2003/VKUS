@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Edit Profile</h2>
+<h2>Редактировать Профиль</h2>
 <form method="POST">
     <div>
-        <label for="username">New Username:</label>
+        <label for="username">Новое имя:</label>
         <input type="text" id="username" name="username" value="{{ user.username }}" required>
     </div>
     <div>
-        <label for="password">New Password:</label>
+        <label for="password">Новый пароль:</label>
         <input type="password" id="password" name="password" required>
     </div>
     <button type="submit" class="btn btn-secondary"> Сохранить изменения</button>

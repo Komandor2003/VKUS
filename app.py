@@ -243,6 +243,13 @@ def admin():
     orders = Order.query.order_by(Order.id.desc()).all()  # загрузим все заказы
     return render_template('admin.html', products=products, orders=orders)
 
+@app.route('/admin/delete_product/<int:product_id>', methods=['DELETE'])
+def delete_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    db.session.delete(product)
+    db.session.commit()
+    return '', 204  # Возвращаем 204 No Content
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

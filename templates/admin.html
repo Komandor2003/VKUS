@@ -42,6 +42,10 @@
                         <td>{{ product.description }}</td>
                         <td>{{ product.price }} ₽</td>
                         <td><img src="{{ product.image_url }}" alt="Product Image" width="50" /></td>
+                        <td>
+                            <button class="btn btn-danger" onclick="deleteProduct({{ product.id }}, this)">Удалить</button>
+                        </td>
+                        
                     </tr>
                 {% endfor %}
             </tbody>
@@ -82,4 +86,27 @@
             </tbody>
         </table>
     </div>
+
+    <script>
+        function deleteProduct(productId, buttonElement) {
+            if (!confirm("Вы уверены, что хотите удалить продукт?")) return;
+        
+            fetch(`/admin/delete_product/${productId}`, {
+                method: "DELETE"
+            })
+            .then(response => {
+                if (response.ok) {
+                    const row = buttonElement.closest("tr");
+                    row.remove(); // удалить строку из таблицы
+                } else {
+                    alert("Ошибка при удалении продукта");
+                }
+            })
+            .catch(error => {
+                console.error("Ошибка при удалении:", error);
+                alert("Произошла ошибка при удалении");
+            });
+        }
+        </script>
+        
 {% endblock %}

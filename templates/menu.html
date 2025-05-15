@@ -2,27 +2,31 @@
 {% block title %}Меню{% endblock %}
 
 {% block content %}
-<div class="container">
-  <h2>Меню ресторана</h2>
+<div class="image-container3"></div>
+<div class="menu-background">
+  <div class="container">
+    <h2>Меню ресторана</h2>
 
-  {% if products %}
-    <div class="product-grid">
-      {% for product in products %}
-        <div class="product-card">
-          {% if product.image_url %}
-            <img src="{{ product.image_url }}" alt="{{ product.name }}">
-          {% endif %}
-          <h3>{{ product.name }}</h3>
-          <p>{{ product.description }}</p>
-          <p class="price">{{ product.price }} ₽</p>
-          <button onclick="addToCart({{ product.id }})">В корзину</button>
-        </div>
-      {% endfor %}
-    </div>
-  {% else %}
-    <p>Пока нет доступных блюд.</p>
-  {% endif %}
+    {% if products %}
+      <div class="product-grid">
+        {% for product in products %}
+          <div class="product-card">
+            {% if product.image_url %}
+              <img src="{{ product.image_url }}" alt="{{ product.name }}">
+            {% endif %}
+            <h3>{{ product.name }}</h3>
+            <p>{{ product.description }}</p>
+            <p class="price">{{ product.price }} ₽</p>
+            <button onclick="addToCart({{ product.id }})">В корзину</button>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>Пока нет доступных блюд.</p>
+    {% endif %}
+  </div>
 </div>
+
 <script>
   function addToCart(productId) {
       fetch(`/cart/ajax_add/${productId}`, {
@@ -36,7 +40,6 @@
       .then(data => {
           if (data.success) {
               // Можно обновить иконку корзины, количество и т.п.
-              // alert("Товар добавлен в корзину. Всего товаров: " + data.total_items);
           } else {
               alert("Не удалось добавить товар в корзину.");
           }
@@ -45,6 +48,6 @@
           console.error("Ошибка при добавлении в корзину:", error);
       });
   }
-  </script>
-  
+</script>
+
 {% endblock %}
